@@ -1,0 +1,289 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.app{font-family:var(--font-sans);max-width:480px;margin:0 auto}
+.hero{padding:1.5rem 1.25rem 1rem;text-align:center;border-bottom:0.5px solid var(--color-border-tertiary)}
+.hero h1{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.hero p{font-size:13px;color:var(--color-text-secondary);margin-top:4px}
+.store-tabs{display:flex;overflow-x:auto;border-bottom:0.5px solid var(--color-border-tertiary)}
+.stab{flex:1;min-width:0;padding:10px 8px;font-size:11px;text-align:center;cursor:pointer;border:none;background:none;color:var(--color-text-secondary);border-bottom:2px solid transparent;line-height:1.3}
+.stab.active{color:var(--color-text-primary);border-bottom:2px solid var(--color-text-primary);font-weight:500}
+.mesa-bar{display:flex;align-items:center;gap:8px;padding:8px 1rem;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.mesa-bar label{font-size:12px;color:var(--color-text-secondary);white-space:nowrap}
+.mesa-bar input{flex:1;padding:5px 10px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
+.carta{padding:0.75rem 0 5rem}
+.cat-section{border-bottom:0.5px solid var(--color-border-tertiary)}
+.cat-header{display:flex;align-items:center;justify-content:space-between;padding:14px 1.25rem;cursor:pointer;background:var(--color-background-primary)}
+.cat-header:hover{background:var(--color-background-secondary)}
+.cat-name{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.cat-count{font-size:12px;color:var(--color-text-tertiary)}
+.cat-chevron{font-size:16px;color:var(--color-text-secondary);transition:transform 0.2s}
+.cat-chevron.open{transform:rotate(180deg)}
+.cat-items{display:none}
+.cat-items.open{display:block}
+.menu-item{display:flex;align-items:center;gap:12px;padding:12px 1.25rem;border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
+.menu-item:hover{background:var(--color-background-secondary)}
+.item-emoji{width:44px;height:44px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:0.5px solid var(--color-border-tertiary)}
+.item-info{flex:1;min-width:0}
+.item-title{font-size:14px;font-weight:500;color:var(--color-text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item-price{font-size:13px;color:var(--color-text-secondary);margin-top:2px}
+.item-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.qty-wrap{display:flex;align-items:center;gap:4px}
+.qbtn{width:26px;height:26px;border-radius:50%;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;font-size:16px;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;line-height:1}
+.qbtn.add{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
+.qnum{font-size:13px;font-weight:500;min-width:18px;text-align:center;color:var(--color-text-primary)}
+.cart-bar{position:fixed;bottom:0;left:0;right:0;padding:12px 1.25rem;background:var(--color-background-primary);border-top:0.5px solid var(--color-border-tertiary);display:none}
+.cart-btn{width:100%;padding:13px;border-radius:var(--border-radius-lg);background:#25d366;color:#fff;font-size:14px;font-weight:500;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
+.cart-btn span{font-size:12px;opacity:0.85}
+.loading{text-align:center;padding:2.5rem;color:var(--color-text-secondary);font-size:14px}
+.cat-img-strip{display:flex;gap:4px;padding:0 1.25rem 10px;overflow-x:auto}
+</style>
+
+<h2 class="sr-only">Carta digital del restaurante</h2>
+
+<div class="app">
+  <div class="hero">
+    <h1 id="hero-title">🌮 Lonchería Flor de Azalea</h1>
+    <p id="hero-sub">Selecciona tu sucursal y arma tu orden</p>
+  </div>
+
+  <div class="store-tabs" id="store-tabs"></div>
+
+  <div class="mesa-bar">
+    <label><i class="ti ti-armchair" aria-hidden="true"></i> Mesa</label>
+    <input type="text" id="mesa-input" placeholder="Ej. Mesa 3 / Tu nombre" value="Mesa 1">
+  </div>
+
+  <div class="carta" id="carta"><div class="loading">Cargando carta...</div></div>
+</div>
+
+<div class="cart-bar" id="cart-bar">
+  <button class="cart-btn" onclick="sendWhatsApp()">
+    <div style="display:flex;align-items:center;gap:8px"><i class="ti ti-brand-whatsapp" aria-hidden="true" style="font-size:18px"></i> Enviar orden</div>
+    <span id="cart-summary"></span>
+  </button>
+</div>
+
+<script>
+const TOKEN = '3942fa8f03a145458cc688ecd3ed7467';
+let allItems = [], storeMap = {}, catMap = {};
+let currentStore = null;
+let order = {};
+let openCats = new Set();
+
+const STORE_LABELS = {
+  'Loncheria Flor de Azalea - Matriz': {label:'Flor Matriz', emoji:'🌮'},
+  'Lonchería Flor De Azalea - Sucursal 1': {label:'Flor Sucursal', emoji:'🌮'},
+  'Patrick Burger - MATRIZ': {label:'Patrick Burger', emoji:'🍔'}
+};
+
+const CAT_EMOJI = {
+  'bebida':'🥤','refresco':'🥤','agua':'💧','licuado':'🥛','jugo':'🍊','café':'☕','cafe':'☕','te ':'🍵',
+  'taco':'🌮','burrito':'🌯','hamburguesa':'🍔','hot-dog':'🌭','hotdog':'🌭','platillo':'🍽','quesadilla':'🫓',
+  'golosina':'🍬','dulce':'🍭','botana':'🍿','frituras':'🍟','sabritas':'🍟','barcel':'🍟','marinela':'🧁','mondelez':'🍫',
+  'almacén':'📦','almacen':'📦','mercancía':'📦','insumo':'📦',
+  'desayuno':'🍳','comida':'🍽','cena':'🌙',
+  'default':'🍽'
+};
+
+function getCatEmoji(name) {
+  const n = name.toLowerCase();
+  for (const [k,v] of Object.entries(CAT_EMOJI)) {
+    if (n.includes(k)) return v;
+  }
+  return CAT_EMOJI.default;
+}
+
+async function init() {
+  try {
+    const [stRes, catRes] = await Promise.all([
+      fetch('https://api.loyverse.com/v1/stores', {headers:{Authorization:`Bearer ${TOKEN}`}}),
+      fetch('https://api.loyverse.com/v1/categories?limit=250', {headers:{Authorization:`Bearer ${TOKEN}`}})
+    ]);
+    const stData = await stRes.json();
+    const ctData = await catRes.json();
+    if (stData.stores) stData.stores.forEach(s => storeMap[s.id] = s.name);
+    if (ctData.categories) ctData.categories.forEach(c => catMap[c.id] = c.name);
+    await loadItems();
+  } catch(e) {
+    document.getElementById('carta').innerHTML = '<div class="loading">Error de conexión</div>';
+  }
+}
+
+async function loadItems() {
+  let items = [], cursor = null;
+  do {
+    const url = `https://api.loyverse.com/v1/items?limit=250${cursor?'&cursor='+cursor:''}`;
+    const res = await fetch(url, {headers:{Authorization:`Bearer ${TOKEN}`}});
+    const data = await res.json();
+    if (data.items) items = items.concat(data.items);
+    cursor = data.cursor || null;
+  } while(cursor);
+  allItems = items;
+  buildStoreTabs();
+}
+
+function buildStoreTabs() {
+  const storeIds = [...new Set(
+    allItems.flatMap(i => i.variants?.[0]?.stores?.map(s => s.store_id) || [])
+  )];
+  const storeNames = storeIds.map(id => storeMap[id]).filter(Boolean);
+  const knownOrder = Object.keys(STORE_LABELS);
+  const sorted = knownOrder.filter(n => storeNames.some(s => s === n || s.includes(n.split(' ')[0])));
+  
+  const el = document.getElementById('store-tabs');
+  el.innerHTML = sorted.map((s,i) => {
+    const info = STORE_LABELS[s] || {label: s, emoji:'🍽'};
+    return `<button class="stab ${i===0?'active':''}" onclick="switchStore('${s}',this)">${info.emoji} ${info.label}</button>`;
+  }).join('');
+  
+  currentStore = sorted[0];
+  renderCarta();
+}
+
+function switchStore(store, el) {
+  currentStore = store;
+  order = {};
+  openCats = new Set();
+  document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  const info = STORE_LABELS[store] || {emoji:'🍽'};
+  document.getElementById('hero-title').textContent = info.emoji + ' ' + store;
+  renderCarta();
+  updateCartBar();
+}
+
+function getStoreItems() {
+  return allItems.filter(item => {
+    const v = item.variants?.[0];
+    if (!v?.stores) return false;
+    return v.stores.some(s => storeMap[s.store_id] === currentStore && s.available_for_sale && s.price > 0);
+  });
+}
+
+function getItemPrice(item) {
+  const v = item.variants?.[0];
+  const s = v?.stores?.find(s => storeMap[s.store_id] === currentStore);
+  return s ? s.price : (v?.default_price || 0);
+}
+
+function renderCarta() {
+  const items = getStoreItems();
+  const bycat = {};
+  items.forEach(item => {
+    const cat = catMap[item.category_id] || 'General';
+    if (!bycat[cat]) bycat[cat] = [];
+    bycat[cat].push(item);
+  });
+
+  const skipCats = ['almacén','almacen','mercancías','mercancia','insumo'];
+  const cats = Object.keys(bycat).filter(c => !skipCats.some(s => c.toLowerCase().includes(s)));
+  
+  if (!cats.length) {
+    document.getElementById('carta').innerHTML = '<div class="loading">Sin productos disponibles</div>';
+    return;
+  }
+
+  document.getElementById('carta').innerHTML = cats.sort().map(cat => {
+    const citems = bycat[cat];
+    const isOpen = openCats.has(cat);
+    const emoji = getCatEmoji(cat);
+    return `<div class="cat-section">
+      <div class="cat-header" onclick="toggleCat('${cat.replace(/'/g,"\\'")}')">
+        <span style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:20px">${emoji}</span>
+          <span class="cat-name">${cat}</span>
+        </span>
+        <span style="display:flex;align-items:center;gap:8px">
+          <span class="cat-count">${citems.length} productos</span>
+          <i class="ti ti-chevron-down cat-chevron ${isOpen?'open':''}" id="chev-${btoa(cat).replace(/=/g,'')}"></i>
+        </span>
+      </div>
+      <div class="cat-items ${isOpen?'open':''}" id="cat-${btoa(cat).replace(/=/g,'')}">
+        ${citems.map(item => renderItem(item)).join('')}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderItem(item) {
+  const price = getItemPrice(item);
+  const qty = order[item.id]?.qty || 0;
+  const emoji = getCatEmoji(catMap[item.category_id] || '');
+  return `<div class="menu-item" id="mitem-${item.id}">
+    <div class="item-emoji">${emoji}</div>
+    <div class="item-info">
+      <div class="item-title">${item.item_name}</div>
+      <div class="item-price">$${price.toFixed(0)}</div>
+    </div>
+    <div class="item-actions">
+      ${qty > 0 ? `
+        <div class="qty-wrap">
+          <button class="qbtn" onclick="changeQty('${item.id}','${item.item_name.replace(/'/g,"\\'")}',${price},-1)">−</button>
+          <span class="qnum">${qty}</span>
+          <button class="qbtn add" onclick="changeQty('${item.id}','${item.item_name.replace(/'/g,"\\'")}',${price},1)">+</button>
+        </div>
+      ` : `
+        <button class="qbtn add" onclick="changeQty('${item.id}','${item.item_name.replace(/'/g,"\\'")}',${price},1)">+</button>
+      `}
+    </div>
+  </div>`;
+}
+
+function toggleCat(cat) {
+  const key = btoa(cat).replace(/=/g,'');
+  const el = document.getElementById('cat-'+key);
+  const chev = document.getElementById('chev-'+key);
+  if (!el) return;
+  if (openCats.has(cat)) {
+    openCats.delete(cat);
+    el.classList.remove('open');
+    chev && chev.classList.remove('open');
+  } else {
+    openCats.add(cat);
+    el.classList.add('open');
+    chev && chev.classList.add('open');
+  }
+}
+
+function changeQty(id, name, price, delta) {
+  if (!order[id]) order[id] = {name, price, qty: 0};
+  order[id].qty += delta;
+  if (order[id].qty <= 0) delete order[id];
+  const itemEl = document.getElementById('mitem-'+id);
+  if (itemEl) {
+    const qty = order[id]?.qty || 0;
+    itemEl.querySelector('.item-actions').innerHTML = qty > 0 ? `
+      <div class="qty-wrap">
+        <button class="qbtn" onclick="changeQty('${id}','${name.replace(/'/g,"\\'")}',${price},-1)">−</button>
+        <span class="qnum">${qty}</span>
+        <button class="qbtn add" onclick="changeQty('${id}','${name.replace(/'/g,"\\'")}',${price},1)">+</button>
+      </div>` : `<button class="qbtn add" onclick="changeQty('${id}','${name.replace(/'/g,"\\'")}',${price},1)">+</button>`;
+  }
+  updateCartBar();
+}
+
+function updateCartBar() {
+  const keys = Object.keys(order);
+  const bar = document.getElementById('cart-bar');
+  if (!keys.length) { bar.style.display='none'; return; }
+  bar.style.display='block';
+  let total=0, count=0;
+  keys.forEach(k => { total += order[k].price * order[k].qty; count += order[k].qty; });
+  document.getElementById('cart-summary').textContent = `${count} producto${count>1?'s':''} · $${total.toFixed(0)}`;
+}
+
+function sendWhatsApp() {
+  const mesa = document.getElementById('mesa-input').value || 'Sin mesa';
+  let msg = `🍽 *Orden - ${currentStore}*\n📍 ${mesa}\n\n`;
+  let total = 0;
+  Object.values(order).forEach(it => {
+    msg += `• ${it.qty}x ${it.name} — $${(it.price*it.qty).toFixed(0)}\n`;
+    total += it.price * it.qty;
+  });
+  msg += `\n*Total: $${total.toFixed(0)}*`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+init();
+</script>
