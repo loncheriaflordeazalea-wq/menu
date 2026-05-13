@@ -1,289 +1,675 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a1a1a" />
+  <meta name="description" content="Menú Digital" />
 
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-.app{font-family:var(--font-sans);max-width:480px;margin:0 auto}
-.hero{padding:1.5rem 1.25rem 1rem;text-align:center;border-bottom:0.5px solid var(--color-border-tertiary)}
-.hero h1{font-size:22px;font-weight:500;color:var(--color-text-primary)}
-.hero p{font-size:13px;color:var(--color-text-secondary);margin-top:4px}
-.store-tabs{display:flex;overflow-x:auto;border-bottom:0.5px solid var(--color-border-tertiary)}
-.stab{flex:1;min-width:0;padding:10px 8px;font-size:11px;text-align:center;cursor:pointer;border:none;background:none;color:var(--color-text-secondary);border-bottom:2px solid transparent;line-height:1.3}
-.stab.active{color:var(--color-text-primary);border-bottom:2px solid var(--color-text-primary);font-weight:500}
-.mesa-bar{display:flex;align-items:center;gap:8px;padding:8px 1rem;background:var(--color-background-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
-.mesa-bar label{font-size:12px;color:var(--color-text-secondary);white-space:nowrap}
-.mesa-bar input{flex:1;padding:5px 10px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary)}
-.carta{padding:0.75rem 0 5rem}
-.cat-section{border-bottom:0.5px solid var(--color-border-tertiary)}
-.cat-header{display:flex;align-items:center;justify-content:space-between;padding:14px 1.25rem;cursor:pointer;background:var(--color-background-primary)}
-.cat-header:hover{background:var(--color-background-secondary)}
-.cat-name{font-size:15px;font-weight:500;color:var(--color-text-primary)}
-.cat-count{font-size:12px;color:var(--color-text-tertiary)}
-.cat-chevron{font-size:16px;color:var(--color-text-secondary);transition:transform 0.2s}
-.cat-chevron.open{transform:rotate(180deg)}
-.cat-items{display:none}
-.cat-items.open{display:block}
-.menu-item{display:flex;align-items:center;gap:12px;padding:12px 1.25rem;border-top:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary)}
-.menu-item:hover{background:var(--color-background-secondary)}
-.item-emoji{width:44px;height:44px;border-radius:var(--border-radius-md);background:var(--color-background-secondary);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:0.5px solid var(--color-border-tertiary)}
-.item-info{flex:1;min-width:0}
-.item-title{font-size:14px;font-weight:500;color:var(--color-text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.item-price{font-size:13px;color:var(--color-text-secondary);margin-top:2px}
-.item-actions{display:flex;align-items:center;gap:6px;flex-shrink:0}
-.qty-wrap{display:flex;align-items:center;gap:4px}
-.qbtn{width:26px;height:26px;border-radius:50%;border:0.5px solid var(--color-border-secondary);background:var(--color-background-primary);cursor:pointer;font-size:16px;color:var(--color-text-secondary);display:flex;align-items:center;justify-content:center;line-height:1}
-.qbtn.add{background:var(--color-text-primary);color:var(--color-background-primary);border-color:var(--color-text-primary)}
-.qnum{font-size:13px;font-weight:500;min-width:18px;text-align:center;color:var(--color-text-primary)}
-.cart-bar{position:fixed;bottom:0;left:0;right:0;padding:12px 1.25rem;background:var(--color-background-primary);border-top:0.5px solid var(--color-border-tertiary);display:none}
-.cart-btn{width:100%;padding:13px;border-radius:var(--border-radius-lg);background:#25d366;color:#fff;font-size:14px;font-weight:500;border:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between}
-.cart-btn span{font-size:12px;opacity:0.85}
-.loading{text-align:center;padding:2.5rem;color:var(--color-text-secondary);font-size:14px}
-.cat-img-strip{display:flex;gap:4px;padding:0 1.25rem 10px;overflow-x:auto}
-</style>
+  <!-- PWA -->
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Menú" />
 
-<h2 class="sr-only">Carta digital del restaurante</h2>
+  <title>Menú Digital</title>
 
-<div class="app">
-  <div class="hero">
-    <h1 id="hero-title">🌮 Lonchería Flor de Azalea</h1>
-    <p id="hero-sub">Selecciona tu sucursal y arma tu orden</p>
-  </div>
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
 
-  <div class="store-tabs" id="store-tabs"></div>
+  <!-- Fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
 
-  <div class="mesa-bar">
-    <label><i class="ti ti-armchair" aria-hidden="true"></i> Mesa</label>
-    <input type="text" id="mesa-input" placeholder="Ej. Mesa 3 / Tu nombre" value="Mesa 1">
-  </div>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['Playfair Display', 'serif'],
+            body:    ['DM Sans', 'sans-serif'],
+          },
+          colors: {
+            brand: 'var(--color-brand)',
+            dark:  '#111111',
+          }
+        }
+      }
+    }
+  </script>
 
-  <div class="carta" id="carta"><div class="loading">Cargando carta...</div></div>
+  <style>
+    /* ── Variables de tema (se sobreescriben con Config de GS) ── */
+    :root {
+      --color-brand: #c8923a;
+      --color-brand-light: #e8b56a;
+    }
+
+    * { -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #111111;
+      color: #f0ebe3;
+      min-height: 100svh;
+    }
+
+    /* ── Scrollbar fina ── */
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--color-brand); border-radius: 4px; }
+
+    /* ── Loader ── */
+    #loader {
+      position: fixed; inset: 0; z-index: 100;
+      background: #111;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 1rem;
+      transition: opacity .5s, visibility .5s;
+    }
+    #loader.hidden { opacity: 0; visibility: hidden; }
+    .loader-ring {
+      width: 48px; height: 48px;
+      border: 3px solid rgba(200,146,58,.2);
+      border-top-color: var(--color-brand);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 56vw;
+      max-height: 380px;
+      background: linear-gradient(160deg, #1c1008 0%, #111 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    #hero::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 60%, rgba(200,146,58,.18) 0%, transparent 65%);
+    }
+
+    /* ── Sticky categories ── */
+    #cat-bar {
+      position: sticky; top: 0; z-index: 40;
+      background: rgba(17,17,17,.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    .cat-pill {
+      white-space: nowrap; cursor: pointer;
+      transition: background .2s, color .2s;
+    }
+    .cat-pill.active {
+      background: var(--color-brand);
+      color: #111;
+    }
+
+    /* ── Cards ── */
+    .dish-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid rgba(255,255,255,.07);
+      border-radius: 1rem;
+      overflow: hidden;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .dish-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,0,0,.4); }
+    .dish-card.sold-out { opacity: .45; pointer-events: none; }
+    .dish-card img {
+      width: 100%; aspect-ratio: 4/3;
+      object-fit: cover;
+      background: #1e1e1e;
+    }
+
+    /* ── Qty control ── */
+    .qty-btn {
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 1px solid var(--color-brand);
+      color: var(--color-brand);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 1.1rem; line-height: 1;
+      transition: background .15s, color .15s;
+    }
+    .qty-btn:hover { background: var(--color-brand); color: #111; }
+
+    /* ── Cart panel ── */
+    #cart-panel {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 60;
+      transform: translateY(100%);
+      transition: transform .35s cubic-bezier(.4,0,.2,1);
+    }
+    #cart-panel.open { transform: translateY(0); }
+
+    /* ── Cart FAB ── */
+    #cart-fab {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 55;
+      width: 58px; height: 58px; border-radius: 50%;
+      background: var(--color-brand);
+      color: #111;
+      box-shadow: 0 4px 24px rgba(200,146,58,.45);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      transition: transform .2s;
+    }
+    #cart-fab:hover { transform: scale(1.08); }
+    #cart-fab.hidden { display: none; }
+
+    /* ── Overlay ── */
+    #overlay {
+      position: fixed; inset: 0; z-index: 50;
+      background: rgba(0,0,0,.6);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+    }
+    #overlay.show { opacity: 1; pointer-events: all; }
+
+    /* ── Mesa input ── */
+    input[type="text"], textarea {
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: .5rem;
+      color: #f0ebe3;
+      outline: none;
+      transition: border-color .2s;
+    }
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--color-brand);
+    }
+
+    /* ── Animación entrada ── */
+    .fade-in {
+      animation: fadeUp .4s both;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Precio highlight ── */
+    .price-tag {
+      color: var(--color-brand);
+      font-weight: 600;
+    }
+
+    /* ── Divider decorativo ── */
+    .deco-divider {
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .deco-divider::before, .deco-divider::after {
+      content: ''; flex: 1; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(200,146,58,.4), transparent);
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ══════════════════════════════════════════════
+     LOADER
+══════════════════════════════════════════════ -->
+<div id="loader">
+  <div class="loader-ring"></div>
+  <p class="text-sm text-white/40 tracking-widest uppercase">Cargando menú…</p>
 </div>
 
-<div class="cart-bar" id="cart-bar">
-  <button class="cart-btn" onclick="sendWhatsApp()">
-    <div style="display:flex;align-items:center;gap:8px"><i class="ti ti-brand-whatsapp" aria-hidden="true" style="font-size:18px"></i> Enviar orden</div>
-    <span id="cart-summary"></span>
-  </button>
+<!-- ══════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════ -->
+<section id="hero" class="flex flex-col items-center justify-end pb-8 pt-12 px-6 text-center">
+  <img id="logo-img" src="" alt="Logo"
+       class="w-24 h-24 object-contain rounded-full mb-5 hidden
+              ring-2 ring-brand/40 shadow-xl shadow-black/60" />
+  <h1 id="rest-name"
+      class="font-display text-4xl font-bold tracking-tight leading-tight mb-2">
+    Tu Restaurante
+  </h1>
+  <p id="rest-slogan" class="text-white/50 text-sm tracking-wide mb-5"></p>
+  <p id="rest-historia"
+     class="max-w-sm text-white/60 text-sm leading-relaxed hidden"></p>
+</section>
+
+<!-- ══════════════════════════════════════════════
+     BARRA DE CATEGORÍAS
+══════════════════════════════════════════════ -->
+<div id="cat-bar" class="px-4 py-3 border-b border-white/[.06]">
+  <div id="cat-pills" class="flex gap-2 overflow-x-auto scrollbar-none pb-1">
+    <!-- Generado dinámicamente -->
+  </div>
 </div>
 
+<!-- ══════════════════════════════════════════════
+     MENÚ
+══════════════════════════════════════════════ -->
+<main id="menu-container" class="px-4 py-6 pb-32 max-w-xl mx-auto space-y-10">
+  <!-- Generado dinámicamente -->
+</main>
+
+<!-- ══════════════════════════════════════════════
+     CART FAB
+══════════════════════════════════════════════ -->
+<button id="cart-fab" class="hidden" onclick="toggleCart(true)" aria-label="Ver pedido">
+  🛒
+  <span id="cart-badge"
+        class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px]
+               font-bold w-5 h-5 rounded-full flex items-center justify-center hidden">
+    0
+  </span>
+</button>
+
+<!-- ══════════════════════════════════════════════
+     OVERLAY
+══════════════════════════════════════════════ -->
+<div id="overlay" onclick="toggleCart(false)"></div>
+
+<!-- ══════════════════════════════════════════════
+     CART PANEL
+══════════════════════════════════════════════ -->
+<div id="cart-panel"
+     class="bg-[#1a1a1a] border-t border-white/[.08] rounded-t-2xl max-h-[85svh] flex flex-col">
+
+  <!-- Header del carrito -->
+  <div class="flex items-center justify-between px-5 pt-5 pb-3">
+    <h2 class="font-display text-xl font-semibold">Tu Pedido</h2>
+    <button onclick="toggleCart(false)"
+            class="text-white/40 hover:text-white transition-colors text-xl leading-none">✕</button>
+  </div>
+
+  <!-- Mesa -->
+  <div class="px-5 pb-4">
+    <label class="text-xs text-white/50 uppercase tracking-wider block mb-1">Mesa / Nombre</label>
+    <input id="mesa-input" type="text" placeholder="Ej: Mesa 4 o Juan García"
+           class="w-full px-3 py-2 text-sm" />
+  </div>
+
+  <div class="border-t border-white/[.06] mx-5"></div>
+
+  <!-- Lista de ítems -->
+  <div id="cart-items" class="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+    <!-- Generado dinámicamente -->
+  </div>
+
+  <!-- Total + botón -->
+  <div class="px-5 pb-8 pt-3 border-t border-white/[.06] space-y-3">
+    <div class="flex justify-between items-center">
+      <span class="text-white/60 text-sm">Total estimado</span>
+      <span id="cart-total" class="font-display text-2xl price-tag">$0.00</span>
+    </div>
+    <button id="wa-btn" onclick="sendWhatsApp()"
+            class="w-full py-3.5 rounded-xl font-semibold text-sm tracking-wide
+                   bg-[#25D366] text-white flex items-center justify-center gap-2
+                   active:scale-[.98] transition-transform">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+      </svg>
+      Enviar por WhatsApp
+    </button>
+    <p class="text-center text-white/25 text-[11px]">Los precios son estimados. El cobro se confirma en caja.</p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════════ -->
 <script>
-const TOKEN = '3942fa8f03a145458cc688ecd3ed7467';
-let allItems = [], storeMap = {}, catMap = {};
-let currentStore = null;
-let order = {};
-let openCats = new Set();
+// ╔══════════════════════════════════════════════╗
+//  CONFIGURACIÓN — EDITA ESTOS DOS VALORES
+// ╚══════════════════════════════════════════════╝
+const GAS_URL  = "https://script.google.com/macros/s/AKfycbzqt906e0bkyv1p0O7cssDeiaOY1IfEQ41cXcVlPS0E111uGYH3HIfmbH4pw9fPysCU/exec"; // ← URL de tu Web App
+const API_KEY  = "LFDA-MM";   // ← Misma clave que en Code.gs
+// ──────────────────────────────────────────────
 
-const STORE_LABELS = {
-  'Loncheria Flor de Azalea - Matriz': {label:'Flor Matriz', emoji:'🌮'},
-  'Lonchería Flor De Azalea - Sucursal 1': {label:'Flor Sucursal', emoji:'🌮'},
-  'Patrick Burger - MATRIZ': {label:'Patrick Burger', emoji:'🍔'}
+// Fallback de configuración (si no hay hoja Config)
+const DEFAULT_CONFIG = {
+  nombre_restaurante: "Mi Restaurante",
+  slogan:             "",
+  historia:           "",
+  logo_url:           "",
+  whatsapp_numero:    "5219510000000",  // ← Cambia tu número
+  moneda:             "$",
+  color_primario:     "#c8923a"
 };
 
-const CAT_EMOJI = {
-  'bebida':'🥤','refresco':'🥤','agua':'💧','licuado':'🥛','jugo':'🍊','café':'☕','cafe':'☕','te ':'🍵',
-  'taco':'🌮','burrito':'🌯','hamburguesa':'🍔','hot-dog':'🌭','hotdog':'🌭','platillo':'🍽','quesadilla':'🫓',
-  'golosina':'🍬','dulce':'🍭','botana':'🍿','frituras':'🍟','sabritas':'🍟','barcel':'🍟','marinela':'🧁','mondelez':'🍫',
-  'almacén':'📦','almacen':'📦','mercancía':'📦','insumo':'📦',
-  'desayuno':'🍳','comida':'🍽','cena':'🌙',
-  'default':'🍽'
-};
+// Estado global
+let menuData   = [];
+let configData = { ...DEFAULT_CONFIG };
+let cart       = {};   // { id: { item, qty, nota } }
+let activeCat  = null;
 
-function getCatEmoji(name) {
-  const n = name.toLowerCase();
-  for (const [k,v] of Object.entries(CAT_EMOJI)) {
-    if (n.includes(k)) return v;
-  }
-  return CAT_EMOJI.default;
-}
-
+// ── INICIALIZACIÓN ─────────────────────────────
 async function init() {
   try {
-    const [stRes, catRes] = await Promise.all([
-      fetch('https://api.loyverse.com/v1/stores', {headers:{Authorization:`Bearer ${TOKEN}`}}),
-      fetch('https://api.loyverse.com/v1/categories?limit=250', {headers:{Authorization:`Bearer ${TOKEN}`}})
-    ]);
-    const stData = await stRes.json();
-    const ctData = await catRes.json();
-    if (stData.stores) stData.stores.forEach(s => storeMap[s.id] = s.name);
-    if (ctData.categories) ctData.categories.forEach(c => catMap[c.id] = c.name);
-    await loadItems();
-  } catch(e) {
-    document.getElementById('carta').innerHTML = '<div class="loading">Error de conexión</div>';
+    const url  = `${GAS_URL}?key=${encodeURIComponent(API_KEY)}`;
+    const resp = await fetch(url);
+    if (!resp.ok) throw new Error("Error de red: " + resp.status);
+    const data = await resp.json();
+    if (data.error) throw new Error(data.error);
+
+    if (data.config) configData = { ...DEFAULT_CONFIG, ...data.config };
+    if (data.menu)   menuData   = data.menu;
+
+    applyConfig();
+    buildMenu();
+
+  } catch (err) {
+    console.error(err);
+    // Modo demo si falla la carga
+    showError(err.message);
+  } finally {
+    hideLoader();
   }
 }
 
-async function loadItems() {
-  let items = [], cursor = null;
-  do {
-    const url = `https://api.loyverse.com/v1/items?limit=250${cursor?'&cursor='+cursor:''}`;
-    const res = await fetch(url, {headers:{Authorization:`Bearer ${TOKEN}`}});
-    const data = await res.json();
-    if (data.items) items = items.concat(data.items);
-    cursor = data.cursor || null;
-  } while(cursor);
-  allItems = items;
-  buildStoreTabs();
+function hideLoader() {
+  const l = document.getElementById("loader");
+  l.classList.add("hidden");
 }
 
-function buildStoreTabs() {
-  const storeIds = [...new Set(
-    allItems.flatMap(i => i.variants?.[0]?.stores?.map(s => s.store_id) || [])
+function showError(msg) {
+  const c = document.getElementById("menu-container");
+  c.innerHTML = `
+    <div class="text-center py-16 text-white/40">
+      <p class="text-4xl mb-4">⚠️</p>
+      <p class="text-sm">No se pudo cargar el menú.</p>
+      <p class="text-xs mt-2 text-white/25">${escapeHtml(msg)}</p>
+    </div>`;
+}
+
+// ── APLICAR CONFIG ──────────────────────────────
+function applyConfig() {
+  const c = configData;
+
+  // Color de marca
+  if (c.color_primario) {
+    document.documentElement.style.setProperty("--color-brand", c.color_primario);
+    document.querySelector('meta[name="theme-color"]').content = c.color_primario;
+  }
+
+  // Textos
+  document.title = c.nombre_restaurante || "Menú";
+  document.getElementById("rest-name").textContent = c.nombre_restaurante || "";
+
+  const slogan = document.getElementById("rest-slogan");
+  slogan.textContent = c.slogan || "";
+
+  const historia = document.getElementById("rest-historia");
+  if (c.historia) {
+    historia.textContent = c.historia;
+    historia.classList.remove("hidden");
+  }
+
+  // Logo
+  const logo = document.getElementById("logo-img");
+  if (c.logo_url) {
+    logo.src = c.logo_url;
+    logo.alt = c.nombre_restaurante || "Logo";
+    logo.classList.remove("hidden");
+  }
+
+  // Apple PWA title
+  document.querySelector('meta[name="apple-mobile-web-app-title"]').content =
+    c.nombre_restaurante || "Menú";
+}
+
+// ── CONSTRUIR MENÚ ──────────────────────────────
+function buildMenu() {
+  const cats = [...new Set(
+    menuData.filter(i => i.disponible !== false).map(i => i.categoria || "General")
   )];
-  const storeNames = storeIds.map(id => storeMap[id]).filter(Boolean);
-  const knownOrder = Object.keys(STORE_LABELS);
-  const sorted = knownOrder.filter(n => storeNames.some(s => s === n || s.includes(n.split(' ')[0])));
-  
-  const el = document.getElementById('store-tabs');
-  el.innerHTML = sorted.map((s,i) => {
-    const info = STORE_LABELS[s] || {label: s, emoji:'🍽'};
-    return `<button class="stab ${i===0?'active':''}" onclick="switchStore('${s}',this)">${info.emoji} ${info.label}</button>`;
-  }).join('');
-  
-  currentStore = sorted[0];
-  renderCarta();
-}
 
-function switchStore(store, el) {
-  currentStore = store;
-  order = {};
-  openCats = new Set();
-  document.querySelectorAll('.stab').forEach(t => t.classList.remove('active'));
-  el.classList.add('active');
-  const info = STORE_LABELS[store] || {emoji:'🍽'};
-  document.getElementById('hero-title').textContent = info.emoji + ' ' + store;
-  renderCarta();
-  updateCartBar();
-}
+  // Si hay platos agotados, agrega categoría para mostrarlos al final
+  const allCats = [...new Set(menuData.map(i => i.categoria || "General"))];
 
-function getStoreItems() {
-  return allItems.filter(item => {
-    const v = item.variants?.[0];
-    if (!v?.stores) return false;
-    return v.stores.some(s => storeMap[s.store_id] === currentStore && s.available_for_sale && s.price > 0);
-  });
-}
-
-function getItemPrice(item) {
-  const v = item.variants?.[0];
-  const s = v?.stores?.find(s => storeMap[s.store_id] === currentStore);
-  return s ? s.price : (v?.default_price || 0);
-}
-
-function renderCarta() {
-  const items = getStoreItems();
-  const bycat = {};
-  items.forEach(item => {
-    const cat = catMap[item.category_id] || 'General';
-    if (!bycat[cat]) bycat[cat] = [];
-    bycat[cat].push(item);
+  // Pills de categorías
+  const pillBar = document.getElementById("cat-pills");
+  allCats.forEach((cat, idx) => {
+    const btn = document.createElement("button");
+    btn.className = `cat-pill px-4 py-1.5 rounded-full text-sm border border-white/10
+                     text-white/70 ${idx === 0 ? "active" : ""}`;
+    btn.textContent = cat;
+    btn.dataset.cat = cat;
+    btn.addEventListener("click", () => scrollToCategory(cat, btn));
+    pillBar.appendChild(btn);
   });
 
-  const skipCats = ['almacén','almacen','mercancías','mercancia','insumo'];
-  const cats = Object.keys(bycat).filter(c => !skipCats.some(s => c.toLowerCase().includes(s)));
-  
-  if (!cats.length) {
-    document.getElementById('carta').innerHTML = '<div class="loading">Sin productos disponibles</div>';
+  if (allCats.length > 0) activeCat = allCats[0];
+
+  // Secciones por categoría
+  const container = document.getElementById("menu-container");
+  allCats.forEach(cat => {
+    const items = menuData.filter(i => (i.categoria || "General") === cat);
+    if (items.length === 0) return;
+
+    const section = document.createElement("section");
+    section.id = `cat-${slugify(cat)}`;
+    section.innerHTML = `
+      <div class="deco-divider mb-6">
+        <h2 class="font-display italic text-xl text-white/90 px-3">${escapeHtml(cat)}</h2>
+      </div>
+      <div class="grid grid-cols-1 gap-4" id="grid-${slugify(cat)}"></div>
+    `;
+    container.appendChild(section);
+
+    const grid = section.querySelector(`#grid-${slugify(cat)}`);
+    items.forEach((item, i) => {
+      const card = buildCard(item, i);
+      grid.appendChild(card);
+    });
+  });
+
+  // Intersection observer para actualizar pill activa
+  setupCatObserver(allCats);
+}
+
+function buildCard(item, idx) {
+  const id    = item.id || slugify(item.nombre);
+  const avail = item.disponible !== false;
+  const mon   = configData.moneda || "$";
+
+  const div = document.createElement("div");
+  div.className = `dish-card fade-in ${avail ? "" : "sold-out"}`;
+  div.style.animationDelay = (idx * 60) + "ms";
+  div.dataset.id = id;
+
+  const imgHtml = item.imagenurl
+    ? `<img src="${escapeHtml(item.imagenurl)}" alt="${escapeHtml(item.nombre)}"
+            loading="lazy" onerror="this.style.display='none'" />`
+    : "";
+
+  div.innerHTML = `
+    ${imgHtml}
+    <div class="p-4">
+      <div class="flex justify-between items-start gap-3 mb-1">
+        <h3 class="font-display text-base font-semibold leading-snug flex-1">
+          ${escapeHtml(item.nombre)}
+          ${!avail ? '<span class="ml-2 text-[10px] bg-red-900/60 text-red-300 px-2 py-0.5 rounded-full align-middle">AGOTADO</span>' : ""}
+        </h3>
+        <span class="price-tag text-base shrink-0">${mon}${Number(item.precio).toFixed(2)}</span>
+      </div>
+      ${item.descripcion ? `<p class="text-white/50 text-xs leading-relaxed mb-3">${escapeHtml(item.descripcion)}</p>` : ""}
+
+      ${avail ? `
+      <div class="flex items-center gap-3 mt-3">
+        <div class="flex items-center gap-2">
+          <button class="qty-btn" onclick="changeQty('${id}', -1)">−</button>
+          <span id="qty-${id}" class="w-6 text-center text-sm font-semibold">0</span>
+          <button class="qty-btn" onclick="changeQty('${id}', 1, ${JSON.stringify(item)})">+</button>
+        </div>
+        <input type="text" id="note-${id}"
+               placeholder="Nota (sin cebolla…)"
+               class="flex-1 px-3 py-1.5 text-xs"
+               onchange="updateNote('${id}', this.value)" />
+      </div>` : ""}
+    </div>
+  `;
+  return div;
+}
+
+// ── CARRITO ─────────────────────────────────────
+function changeQty(id, delta, item) {
+  if (!cart[id] && delta > 0) cart[id] = { item, qty: 0, nota: "" };
+  if (!cart[id]) return;
+
+  cart[id].qty = Math.max(0, cart[id].qty + delta);
+  if (cart[id].qty === 0) delete cart[id];
+
+  document.getElementById(`qty-${id}`).textContent = cart[id]?.qty ?? 0;
+  renderCartItems();
+  updateFab();
+}
+
+function updateNote(id, val) {
+  if (cart[id]) cart[id].nota = val;
+}
+
+function renderCartItems() {
+  const container = document.getElementById("cart-items");
+  const items     = Object.values(cart);
+  const mon       = configData.moneda || "$";
+
+  if (items.length === 0) {
+    container.innerHTML = `
+      <p class="text-white/30 text-sm text-center py-8">Tu pedido está vacío.</p>`;
+    document.getElementById("cart-total").textContent = `${mon}0.00`;
     return;
   }
 
-  document.getElementById('carta').innerHTML = cats.sort().map(cat => {
-    const citems = bycat[cat];
-    const isOpen = openCats.has(cat);
-    const emoji = getCatEmoji(cat);
-    return `<div class="cat-section">
-      <div class="cat-header" onclick="toggleCat('${cat.replace(/'/g,"\\'")}')">
-        <span style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:20px">${emoji}</span>
-          <span class="cat-name">${cat}</span>
-        </span>
-        <span style="display:flex;align-items:center;gap:8px">
-          <span class="cat-count">${citems.length} productos</span>
-          <i class="ti ti-chevron-down cat-chevron ${isOpen?'open':''}" id="chev-${btoa(cat).replace(/=/g,'')}"></i>
-        </span>
-      </div>
-      <div class="cat-items ${isOpen?'open':''}" id="cat-${btoa(cat).replace(/=/g,'')}">
-        ${citems.map(item => renderItem(item)).join('')}
-      </div>
-    </div>`;
-  }).join('');
-}
-
-function renderItem(item) {
-  const price = getItemPrice(item);
-  const qty = order[item.id]?.qty || 0;
-  const emoji = getCatEmoji(catMap[item.category_id] || '');
-  return `<div class="menu-item" id="mitem-${item.id}">
-    <div class="item-emoji">${emoji}</div>
-    <div class="item-info">
-      <div class="item-title">${item.item_name}</div>
-      <div class="item-price">$${price.toFixed(0)}</div>
-    </div>
-    <div class="item-actions">
-      ${qty > 0 ? `
-        <div class="qty-wrap">
-          <button class="qbtn" onclick="changeQty('${item.id}','${item.item_name.replace(/'/g,"\\'")}',${price},-1)">−</button>
-          <span class="qnum">${qty}</span>
-          <button class="qbtn add" onclick="changeQty('${item.id}','${item.item_name.replace(/'/g,"\\'")}',${price},1)">+</button>
-        </div>
-      ` : `
-        <button class="qbtn add" onclick="changeQty('${item.id}','${item.item_name.replace(/'/g,"\\'")}',${price},1)">+</button>
-      `}
-    </div>
-  </div>`;
-}
-
-function toggleCat(cat) {
-  const key = btoa(cat).replace(/=/g,'');
-  const el = document.getElementById('cat-'+key);
-  const chev = document.getElementById('chev-'+key);
-  if (!el) return;
-  if (openCats.has(cat)) {
-    openCats.delete(cat);
-    el.classList.remove('open');
-    chev && chev.classList.remove('open');
-  } else {
-    openCats.add(cat);
-    el.classList.add('open');
-    chev && chev.classList.add('open');
-  }
-}
-
-function changeQty(id, name, price, delta) {
-  if (!order[id]) order[id] = {name, price, qty: 0};
-  order[id].qty += delta;
-  if (order[id].qty <= 0) delete order[id];
-  const itemEl = document.getElementById('mitem-'+id);
-  if (itemEl) {
-    const qty = order[id]?.qty || 0;
-    itemEl.querySelector('.item-actions').innerHTML = qty > 0 ? `
-      <div class="qty-wrap">
-        <button class="qbtn" onclick="changeQty('${id}','${name.replace(/'/g,"\\'")}',${price},-1)">−</button>
-        <span class="qnum">${qty}</span>
-        <button class="qbtn add" onclick="changeQty('${id}','${name.replace(/'/g,"\\'")}',${price},1)">+</button>
-      </div>` : `<button class="qbtn add" onclick="changeQty('${id}','${name.replace(/'/g,"\\'")}',${price},1)">+</button>`;
-  }
-  updateCartBar();
-}
-
-function updateCartBar() {
-  const keys = Object.keys(order);
-  const bar = document.getElementById('cart-bar');
-  if (!keys.length) { bar.style.display='none'; return; }
-  bar.style.display='block';
-  let total=0, count=0;
-  keys.forEach(k => { total += order[k].price * order[k].qty; count += order[k].qty; });
-  document.getElementById('cart-summary').textContent = `${count} producto${count>1?'s':''} · $${total.toFixed(0)}`;
-}
-
-function sendWhatsApp() {
-  const mesa = document.getElementById('mesa-input').value || 'Sin mesa';
-  let msg = `🍽 *Orden - ${currentStore}*\n📍 ${mesa}\n\n`;
   let total = 0;
-  Object.values(order).forEach(it => {
-    msg += `• ${it.qty}x ${it.name} — $${(it.price*it.qty).toFixed(0)}\n`;
-    total += it.price * it.qty;
-  });
-  msg += `\n*Total: $${total.toFixed(0)}*`;
-  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+  container.innerHTML = items.map(({ item, qty, nota }) => {
+    const sub = item.precio * qty;
+    total    += sub;
+    return `
+      <div class="flex gap-3 items-start">
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium truncate">${escapeHtml(item.nombre)}</p>
+          ${nota ? `<p class="text-xs text-white/40 mt-0.5 truncate">📝 ${escapeHtml(nota)}</p>` : ""}
+        </div>
+        <div class="shrink-0 text-right">
+          <p class="text-xs text-white/40">×${qty}</p>
+          <p class="price-tag text-sm">${mon}${sub.toFixed(2)}</p>
+        </div>
+      </div>`;
+  }).join('<div class="border-t border-white/[.06]"></div>');
+
+  document.getElementById("cart-total").textContent = `${mon}${total.toFixed(2)}`;
 }
 
-init();
+function updateFab() {
+  const fab   = document.getElementById("cart-fab");
+  const badge = document.getElementById("cart-badge");
+  const total = Object.values(cart).reduce((a, b) => a + b.qty, 0);
+
+  if (total > 0) {
+    fab.classList.remove("hidden");
+    badge.classList.remove("hidden");
+    badge.textContent = total > 99 ? "99+" : total;
+  } else {
+    fab.classList.add("hidden");
+    badge.classList.add("hidden");
+  }
+}
+
+function toggleCart(open) {
+  const panel   = document.getElementById("cart-panel");
+  const overlay = document.getElementById("overlay");
+  if (open) {
+    renderCartItems();
+    panel.classList.add("open");
+    overlay.classList.add("show");
+  } else {
+    panel.classList.remove("open");
+    overlay.classList.remove("show");
+  }
+}
+
+// ── WHATSAPP ────────────────────────────────────
+function sendWhatsApp() {
+  const mesa  = document.getElementById("mesa-input").value.trim();
+  const items = Object.values(cart);
+  const mon   = configData.moneda || "$";
+
+  if (!mesa) {
+    document.getElementById("mesa-input").focus();
+    document.getElementById("mesa-input").style.borderColor = "var(--color-brand)";
+    return;
+  }
+  if (items.length === 0) return;
+
+  const total = items.reduce((a, b) => a + b.item.precio * b.qty, 0);
+  const nombre = configData.nombre_restaurante || "Restaurante";
+
+  let msg = `🍽️ *Pedido — ${nombre}*\n`;
+  msg    += `📍 ${mesa}\n\n`;
+
+  items.forEach(({ item, qty, nota }) => {
+    msg += `• ${qty}× ${item.nombre} — ${mon}${(item.precio * qty).toFixed(2)}`;
+    if (nota) msg += `\n  📝 ${nota}`;
+    msg += "\n";
+  });
+
+  msg += `\n💰 *Total: ${mon}${total.toFixed(2)}*`;
+  msg += `\n\n_Enviado desde el menú digital_`;
+
+  const numero = (configData.whatsapp_numero || "").replace(/\D/g, "");
+  const url    = `https://wa.me/${numero}?text=${encodeURIComponent(msg)}`;
+  window.open(url, "_blank");
+}
+
+// ── SCROLL A CATEGORÍA ──────────────────────────
+function scrollToCategory(cat, btn) {
+  const section = document.getElementById(`cat-${slugify(cat)}`);
+  if (!section) return;
+  section.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  document.querySelectorAll(".cat-pill").forEach(p => p.classList.remove("active"));
+  btn.classList.add("active");
+  activeCat = cat;
+}
+
+function setupCatObserver(cats) {
+  const opts = { rootMargin: "-40% 0px -50% 0px" };
+  const obs  = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const cat = cats.find(c => `cat-${slugify(c)}` === e.target.id);
+      if (!cat) return;
+      document.querySelectorAll(".cat-pill").forEach(p => {
+        p.classList.toggle("active", p.dataset.cat === cat);
+      });
+    });
+  }, opts);
+
+  cats.forEach(cat => {
+    const sec = document.getElementById(`cat-${slugify(cat)}`);
+    if (sec) obs.observe(sec);
+  });
+}
+
+// ── UTILS ───────────────────────────────────────
+function slugify(str) {
+  return String(str).toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function escapeHtml(str) {
+  return String(str ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+// ── ARRANQUE ────────────────────────────────────
+window.addEventListener("DOMContentLoaded", init);
 </script>
+
+</body>
+</html>
