@@ -488,6 +488,11 @@ function buildMenu(){
 
   ge("bbar").classList.add("visible");
   setupObs(cats);
+  // Debug: muestra en consola las claves del primer ítem para verificar nombres de campo
+  if(menuData.length>0){
+    console.log("🔍 Campos del primer ítem del menú:", Object.keys(menuData[0]));
+    console.log("🖼 imagenurl del primer ítem:", menuData[0].imagenurl);
+  }
 }
 
 // ── FILA DE PLATILLO ─────────────────────────────────
@@ -501,10 +506,10 @@ function mkRow(item,idx){
   div.className="drow"+(ok?"":" sold")+" fin-up";
   div.style.animationDelay=(idx*45)+"ms";
 
-  // Imagen
-  const imgEl=item.imagenurl
-    ? `<img class="dthumb" src="${esc(item.imagenurl)}" alt="${esc(item.nombre||"")}" loading="lazy"
-           onerror="this.outerHTML='<div class=\\'dthumb-ph\\'>🍽</div>'">`
+  // Imagen — acepta imagenurl, imagen_url, imagenURL, ImagenURL (el GAS normaliza pero por si acaso)
+  const imgSrc = item.imagenurl || item.imagen_url || item.imagenurl || "";
+  const imgEl  = imgSrc
+    ? `<img class="dthumb img-lazy" src="${esc(imgSrc)}" alt="${esc(item.nombre||"")}" loading="lazy" data-src="${esc(imgSrc)}">`
     : `<div class="dthumb-ph">🍽</div>`;
 
   div.innerHTML=`
@@ -524,6 +529,16 @@ function mkRow(item,idx){
       </div>
       <input type="text" class="note-in" id="note-${id}" placeholder="Nota…"/>
     </div>`:''}`;
+
+  // ── Error de imagen (fuera del inline para compatibilidad móvil) ──
+  const imgTag=div.querySelector(".img-lazy");
+  if(imgTag){
+    imgTag.addEventListener("error",function(){
+      const ph=document.createElement("div");
+      ph.className="dthumb-ph"; ph.textContent="🍽";
+      this.replaceWith(ph);
+    });
+  }
 
   // ── Listeners fuera del HTML inline ──────────────────
   if(ok){
